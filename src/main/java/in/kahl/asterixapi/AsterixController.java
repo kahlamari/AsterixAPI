@@ -15,27 +15,14 @@ public class AsterixController {
     }
 
     @GetMapping("/asterix/characters")
-    public List<AsterixCharacter> getCharacters(@RequestParam Optional<String> profession, @RequestParam Optional<Integer> age, @RequestParam Optional<String> name) {
-        List<AsterixCharacter> characters = characterRepo.findAll();
-        if (profession.isPresent()) {
-            characters = characters.stream()
-                    .filter(character -> character.profession().equals(profession.get()))
-                    .toList();
-        }
-
-        if (age.isPresent()) {
-            characters = characters.stream()
-                    .filter(character -> character.age().equals(age.get()))
-                    .toList();
-        }
-
-        if (name.isPresent()) {
-            characters = characters.stream()
-                    .filter(character -> character.name().equals(name.get()))
-                    .toList();
-        }
-
-        return characters;
+    public List<AsterixCharacter> getCharacters(@RequestParam Optional<String> profession,
+                                                @RequestParam Optional<Integer> age,
+                                                @RequestParam Optional<String> name) {
+        return characterRepo.findAll().stream()
+                .filter(character -> profession.map(p -> character.profession().equals(p)).orElse(true))
+                .filter(character -> age.map(a -> character.age().equals(a)).orElse(true))
+                .filter(character -> name.map(n -> character.name().equals(n)).orElse(true))
+                .toList();
     }
 
     @GetMapping("/asterix/characters/{id}")
