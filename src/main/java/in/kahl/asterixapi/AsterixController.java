@@ -1,9 +1,6 @@
 package in.kahl.asterixapi;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.web.bind.annotation.*;
-
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -39,6 +36,11 @@ public class AsterixController {
         }
 
         return characters;
+    }
+
+    @GetMapping("/asterix/characters/{id}")
+    public AsterixCharacter getCharacter(@PathVariable String id) {
+        return characterRepo.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     @PostMapping("/asterix/characters")
