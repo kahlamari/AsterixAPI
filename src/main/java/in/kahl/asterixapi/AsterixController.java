@@ -1,5 +1,6 @@
 package in.kahl.asterixapi;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -31,22 +32,16 @@ public class AsterixController {
     }
 
     @PostMapping("/asterix/characters")
+    @ResponseStatus(HttpStatus.CREATED)
     public AsterixCharacter postCharacter(@RequestBody AsterixCharacter character) {
         return characterRepo.save(character);
     }
 
     @PutMapping("/asterix/characters/{id}")
     public AsterixCharacter updateProfession(@PathVariable String id, @RequestParam String profession) {
-        Optional<AsterixCharacter> character = characterRepo.findById(id);
-
-        if (character.isPresent()) {
-            characterRepo.deleteById(id);
-            AsterixCharacter c = character.get();
-            AsterixCharacter newCharacter = c.withProfession(profession);
-            characterRepo.save(newCharacter);
-            return newCharacter;
-        }
-        throw new NoSuchElementException();
+        return characterRepo.findById(id)
+                .map(character -> characterRepo.save(character.withProfession(profession)))
+                .orElseThrow(NoSuchElementException::new);
     }
 
     @DeleteMapping("/asterix/characters/{id}")
