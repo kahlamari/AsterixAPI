@@ -3,69 +3,48 @@ package in.kahl.asterixapi;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/asterix")
 public class AsterixController {
 
-    private final CharacterRepo characterRepo;
+    private final AsterixService service;
 
-    public AsterixController(CharacterRepo characterRepo) {
-        this.characterRepo = characterRepo;
+    public AsterixController(AsterixService service) {
+        this.service = service;
     }
 
-    @GetMapping("/asterix/characters")
+    @GetMapping("/characters")
     public List<AsterixCharacter> getCharacters(@RequestParam Optional<String> profession,
                                                 @RequestParam Optional<Integer> age,
                                                 @RequestParam Optional<String> name) {
-        return characterRepo.findAll().stream()
-                .filter(character -> profession.map(p -> character.profession().equals(p)).orElse(true))
-                .filter(character -> age.map(a -> character.age().equals(a)).orElse(true))
-                .filter(character -> name.map(n -> character.name().equals(n)).orElse(true))
-                .toList();
+        return service.getCharacters(profession, age, name);
     }
 
-    @GetMapping("/asterix/characters/{id}")
+    @GetMapping("/characters/{id}")
     public AsterixCharacter getCharacter(@PathVariable String id) {
-        return characterRepo.findById(id).orElseThrow(NoSuchElementException::new);
+        return service.getCharacter(id);
     }
 
-    @PostMapping("/asterix/characters")
+    @PostMapping("/characters")
     @ResponseStatus(HttpStatus.CREATED)
     public AsterixCharacter postCharacter(@RequestBody AsterixCharacter character) {
-        return characterRepo.save(character);
+        return service.save(character);
     }
 
-    @PutMapping("/asterix/characters/{id}")
+    @PutMapping("/characters/{id}")
     public AsterixCharacter updateProfession(@PathVariable String id, @RequestParam String profession) {
-        return characterRepo.findById(id)
-                .map(character -> characterRepo.save(character.withProfession(profession)))
-                .orElseThrow(NoSuchElementException::new);
+        return service.updateProfession(id, profession);
     }
 
-    @DeleteMapping("/asterix/characters/{id}")
+    @DeleteMapping("/characters/{id}")
     public AsterixCharacter deleteCharacter(@PathVariable String id) {
-        Optional<AsterixCharacter> character = characterRepo.findById(id);
-
-        if (character.isPresent()) {
-            characterRepo.deleteById(id);
-            return character.get();
-        }
-        throw new NoSuchElementException();
+        return service.delete(id);
     }
 
-    @GetMapping("/asterix/characters/avgage")
+    @GetMapping("/characters/avgage")
     public Double getAverageAge(@RequestParam Optional<String> profession) {
-        List<AsterixCharacter> characters = characterRepo.findAll();
-        if (profession.isPresent()) {
-            characters = characters.stream()
-                    .filter(character -> character.profession().equals(profession.get()))
-                    .toList();
-        }
-        return characters.stream()
-                .mapToInt(AsterixCharacter::age)
-                .average()
-                .orElse(0.0);
+        return service.getAverageAge(profession);
     }
 }
