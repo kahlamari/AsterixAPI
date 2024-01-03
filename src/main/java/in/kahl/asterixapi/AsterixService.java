@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AsterixService {
@@ -26,8 +27,10 @@ public class AsterixService {
         return characterRepo.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
-    public AsterixCharacter save(AsterixCharacter character) {
-        return characterRepo.save(character);
+    public AsterixCharacter save(AsterixCharacterDTO character) {
+        AsterixCharacter asterix = new AsterixCharacter(UUID.randomUUID().toString(),
+                character.name(), character.age(), character.profession());
+        return characterRepo.save(asterix);
     }
 
     public AsterixCharacter updateProfession(String id, String profession) {

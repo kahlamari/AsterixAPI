@@ -29,7 +29,7 @@ public class AsterixController {
 
     @PostMapping("/characters")
     @ResponseStatus(HttpStatus.CREATED)
-    public AsterixCharacter postCharacter(@RequestBody AsterixCharacter character) {
+    public AsterixCharacter postCharacter(@RequestBody AsterixCharacterDTO character) {
         return service.save(character);
     }
 
