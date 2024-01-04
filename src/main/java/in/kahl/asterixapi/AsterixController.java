@@ -16,10 +16,8 @@ public class AsterixController {
     }
 
     @GetMapping("/characters")
-    public List<AsterixCharacter> getCharacters(@RequestParam Optional<String> profession,
-                                                @RequestParam Optional<Integer> age,
-                                                @RequestParam Optional<String> name) {
-        return service.getCharacters(profession, age, name);
+    public List<AsterixCharacter> getAllCharacters(@RequestParam Optional<Integer> age) {
+        return service.getAllCharacters(age);
     }
 
     @GetMapping("/characters/{id}")

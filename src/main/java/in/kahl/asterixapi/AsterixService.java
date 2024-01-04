@@ -16,12 +16,11 @@ public class AsterixService {
         this.idService = ids;
     }
 
-    public List<AsterixCharacter> getCharacters(Optional<String> profession, Optional<Integer> age, Optional<String> name) {
-        return characterRepo.findAll().stream()
-                .filter(character -> profession.map(p -> character.profession().equals(p)).orElse(true))
-                .filter(character -> age.map(a -> character.age().equals(a)).orElse(true))
-                .filter(character -> name.map(n -> character.name().equals(n)).orElse(true))
-                .toList();
+    public List<AsterixCharacter> getAllCharacters(Optional<Integer> age) {
+        if (age.isPresent()) {
+            return characterRepo.findAsterixCharactersByAgeAfter(age.get());
+        }
+        return characterRepo.findAll();
     }
 
     public AsterixCharacter getCharacter(String id) {
