@@ -28,6 +28,7 @@ class AsterixServiceTest {
         // THEN
         assertEquals(testdata, actual);
         verify(repo).findAll();
+        verifyNoMoreInteractions(repo);
     }
 
     @Test
@@ -45,6 +46,7 @@ class AsterixServiceTest {
         // THEN
         assertEquals(testdata, actual);
         verify(repo).findAsterixCharactersByAgeAfter(36);
+        verifyNoMoreInteractions(repo);
     }
 
     @Test
@@ -59,7 +61,9 @@ class AsterixServiceTest {
 
         // THEN
         assertEquals(testdata.get(), actual);
+        verify(repo).findById("2");
         verify(repo).deleteById("2");
+        verifyNoMoreInteractions(repo);
     }
 
     @Test
@@ -76,6 +80,7 @@ class AsterixServiceTest {
                 underTest.delete("2"));
 
         verify(repo).findById("2");
+        verifyNoMoreInteractions(repo);
     }
 
     @Test
@@ -94,6 +99,7 @@ class AsterixServiceTest {
         // THEN
         assertEquals(40.0, actual);
         verify(repo).findAll();
+        verifyNoMoreInteractions(repo);
     }
 
     @Test
@@ -112,6 +118,7 @@ class AsterixServiceTest {
         // THEN
         assertEquals(35.0, actual);
         verify(repo).findAll();
+        verifyNoMoreInteractions(repo);
     }
 
     @Test
@@ -130,6 +137,7 @@ class AsterixServiceTest {
         assertEquals(expected, actual);
         verify(repo).findById("1");
         verify(repo).save(expected);
+        verifyNoMoreInteractions(repo);
     }
 
     @Test
@@ -146,6 +154,7 @@ class AsterixServiceTest {
                 underTest.updateProfession("2", "Warrior"));
 
         verify(repo).findById("2");
+        verifyNoMoreInteractions(repo);
     }
 
     @Test
@@ -161,6 +170,7 @@ class AsterixServiceTest {
         // THEN
         assertEquals(testdata.get(), actual);
         verify(repo).findById("1");
+        verifyNoMoreInteractions(repo);
     }
 
     @Test
@@ -177,6 +187,27 @@ class AsterixServiceTest {
                 underTest.getCharacter("2"));
 
         verify(repo).findById("2");
+        verifyNoMoreInteractions(repo);
+    }
 
+    @Test
+    void saveTest_whenNewCharacter_thenReturnNewCharacterWithId() {
+        // GIVEN
+        when(idService.randomId()).thenReturn("123");
+
+        AsterixCharacterDTO input = new AsterixCharacterDTO("Asterix", 45, "Krieger");
+        AsterixCharacter expected = new AsterixCharacter("123", "Asterix", 45, "Krieger");
+        when(repo.save(expected)).thenReturn(expected);
+        AsterixService underTest = new AsterixService(repo, idService);
+
+        // WHEN
+        AsterixCharacter actual = underTest.save(input);
+
+        // THEN
+        assertEquals(expected, actual);
+        verify(idService).randomId();
+        verify(repo).save(expected);
+        verifyNoMoreInteractions(idService);
+        verifyNoMoreInteractions(repo);
     }
 }
