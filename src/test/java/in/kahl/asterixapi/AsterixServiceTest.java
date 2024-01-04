@@ -113,4 +113,70 @@ class AsterixServiceTest {
         assertEquals(35.0, actual);
         verify(repo).findAll();
     }
+
+    @Test
+    void updateProfessionTest_whenProfessionKrieger_whenProfessionWarrior() {
+        // GIVEN
+        Optional<AsterixCharacter> testdata = Optional.of(new AsterixCharacter("1", "Asterix", 45, "Krieger"));
+        when(repo.findById("1")).thenReturn(testdata);
+        AsterixService underTest = new AsterixService(repo, idService);
+        AsterixCharacter expected = new AsterixCharacter("1", "Asterix", 45, "Warrior");
+        when(repo.save(expected)).thenReturn(expected);
+
+        // WHEN
+        AsterixCharacter actual = underTest.updateProfession("1", "Warrior");
+
+        // THEN
+        assertEquals(expected, actual);
+        verify(repo).findById("1");
+        verify(repo).save(expected);
+    }
+
+    @Test
+    void udpateProfessionTest_whenCharacterDoesntExist_thenException() {
+        // GIVEN
+        Optional<AsterixCharacter> testdata = Optional.empty();
+        when(repo.findById("2")).thenReturn(testdata);
+        AsterixService underTest = new AsterixService(repo, idService);
+
+        // WHEN
+        assertThrows(NoSuchElementException.class, () ->
+
+                // THEN
+                underTest.updateProfession("2", "Warrior"));
+
+        verify(repo).findById("2");
+    }
+
+    @Test
+    void getCharacterTest_whenExists_thenReturnCharacter() {
+        // GIVEN
+        Optional<AsterixCharacter> testdata = Optional.of(new AsterixCharacter("1", "Asterix", 45, "Krieger"));
+        when(repo.findById("1")).thenReturn(testdata);
+        AsterixService underTest = new AsterixService(repo, idService);
+
+        // WHEN
+        AsterixCharacter actual = underTest.getCharacter("1");
+
+        // THEN
+        assertEquals(testdata.get(), actual);
+        verify(repo).findById("1");
+    }
+
+    @Test
+    void getCharacterTest_whenNotExists_thenThrowException() {
+        // GIVEN
+        Optional<AsterixCharacter> testdata = Optional.empty();
+        when(repo.findById("2")).thenReturn(testdata);
+        AsterixService underTest = new AsterixService(repo, idService);
+
+        // WHEN
+        assertThrows(NoSuchElementException.class, () ->
+
+                // THEN
+                underTest.getCharacter("2"));
+
+        verify(repo).findById("2");
+
+    }
 }
