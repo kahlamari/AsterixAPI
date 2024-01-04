@@ -6,13 +6,14 @@ import java.util.NoSuchElementException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class AsterixService {
     private final CharacterRepo characterRepo;
-    public AsterixService(CharacterRepo characterRepo) {
+    private final IdService idService;
+    public AsterixService(CharacterRepo characterRepo, IdService ids) {
         this.characterRepo = characterRepo;
+        this.idService = ids;
     }
 
     public List<AsterixCharacter> getCharacters(Optional<String> profession, Optional<Integer> age, Optional<String> name) {
@@ -28,7 +29,7 @@ public class AsterixService {
     }
 
     public AsterixCharacter save(AsterixCharacterDTO character) {
-        AsterixCharacter asterix = new AsterixCharacter(UUID.randomUUID().toString(),
+        AsterixCharacter asterix = new AsterixCharacter(idService.randomId(),
                 character.name(), character.age(), character.profession());
         return characterRepo.save(asterix);
     }
