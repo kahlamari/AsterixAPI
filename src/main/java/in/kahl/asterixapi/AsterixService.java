@@ -1,6 +1,8 @@
 package in.kahl.asterixapi;
 
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 import java.util.NoSuchElementException;
 
 
@@ -29,7 +31,8 @@ public class AsterixService {
 
     public AsterixCharacter save(AsterixCharacterDTO character) {
         AsterixCharacter asterix = new AsterixCharacter(idService.randomId(),
-                character.name(), character.age(), character.profession());
+                character.name(), character.age(), character.profession(),
+                Instant.now());
         return characterRepo.save(asterix);
     }
 

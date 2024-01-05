@@ -1,14 +1,16 @@
 package in.kahl.asterixapi;
 
 import lombok.With;
-import org.springframework.data.annotation.Id;
+
+import java.time.Instant;
 
 public record AsterixCharacter(
         String id,
         String name,
         Integer age,
         @With
-        String profession
+        String profession,
+        Instant createdAt
 
 ) {
 }
